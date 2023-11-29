@@ -50,7 +50,7 @@ class ctkApp:
         self.showScoreGraphVar = customtkinter.BooleanVar(master=self.frameControlls, value=False)
         self.showScoreGraphCheckbox = customtkinter.CTkCheckBox(master=self.frameControlls, text="Show Score as Graph", variable=self.showScoreGraphVar)
         self.showScoreGraphCheckbox.pack(pady=12, padx=10)
-        self.exportFileButton = customtkinter.CTkButton(master=self.frameControlls, text="Export generated Performance as Midi", command=self.exportFile)
+        self.exportFileButton = customtkinter.CTkButton(master=self.frameControlls, text="Export Performance", command=self.exportFile)
         self.exportFileButton.pack(pady=12, padx=10)
         self.exportGraphsButton = customtkinter.CTkButton(master=self.frameControlls, text="Export Graphs", command=self.exportGraphs)
         self.exportGraphsButton.pack(pady=12, padx=10)
@@ -84,7 +84,7 @@ class ctkApp:
         self.ctkRoot.mainloop()
 
     def exportFile(self):
-        scoreAndPerformance.export_performedPart_as_midi()
+        scoreAndPerformance.export_performedPart_as_midi("rulegenerated_performance.mid")
 
     def exportGraphs(self):
         for key in scoreAndPerformance.graphs:
