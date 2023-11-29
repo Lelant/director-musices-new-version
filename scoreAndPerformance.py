@@ -5,7 +5,7 @@ from partitura import musicanalysis
 from partitura.utils import music as ptmusic
 import parangonar as pa
 from graph import Graph
-from util_functions import graphTitles, graphYlabels, velocity_to_sound_level
+from util_functions import graphTitles, graphYlabels, sound_level_to_velocity, velocity_to_sound_level
 import pygame
 
 class ScoreAndPerformance:
@@ -217,6 +217,11 @@ class ScoreAndPerformance:
         return ptutils.compute_pianoroll(self.performedPart, pitch_margin=2, onset_only=False)
 
     def export_performedPart_as_midi(self, filename):
+        # change velocity according to sound_level
+        for note in self.part.notes:
+            if get_attribute(note, "sound_level") != None:
+                get_performed_note(note)['velocity'] = sound_level_to_velocity(get_attribute(note, "sound_level"))
+        
         pt.save_performance_midi(self.performedPart, filename+".mid")
 
     def getVoices(self):
