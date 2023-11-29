@@ -56,7 +56,7 @@ def sound_level_to_velocity(sound_level):
     if sound_level < -10.0 or sound_level > 10.0:
         print("WARNING: sound_level out of bounds!")
     
-    return mapValue(sound_level, -10.0, 10.0, 1, 127)
+    return int(mapValue(sound_level, -10.0, 10.0, 1, 127))
 
 # returns False on the first condition that is false
 # the arguments should be lambda functions (without arguments) that return true or false

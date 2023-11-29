@@ -130,6 +130,8 @@ venv.bak/
 
 dmn-venv/
 
+temp_files/
+
 # Spyder project settings
 .spyderproject
 .spyproject
