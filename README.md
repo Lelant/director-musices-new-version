@@ -2,9 +2,10 @@
 This tool is a new version of **Director Musices** created as part of my master thesis. 
 
 For more information on the original **Director Musices** follow these links:
-- add link to dm github
-- add link to dm github site
-- add referenze to papers
+- [Director Musices GitHub Repository](https://github.com/docfry/Director-Musices)
+- [Director Musices GitHub Page](https://odyssomay.github.io/clj-dm/)
+- Friberg, A.; Colombo, V.; Frydén, L.; Sundberg, J. 2000. Generating Musical Performances with Director Musices. Artikel in Computer Music Journal 24:3 (Seiten 23 - 29). Massachusetts Institute of Technology.
+- Friberg, A. 2022. Director Musices User Manual. For Director Musices ver. 3.1.4 (update ongoing). Current Version: 2022-01-11
 
 ## Installation
 
