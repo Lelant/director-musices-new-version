@@ -9,6 +9,10 @@ For more information on the original **Director Musices** follow these links:
 ## Installation
 
 To use the tool, first clone this repository or download the files. Optionally create a virtual environment for Python using this command:
+
+> [!TIP]
+> The virtual environment should not be commited into github. You can add the folder of the environment to the .gitignore file. Or just name the environment "dmn-venv", then it's already ignored (see .gitignore line 131)
+
 ```
 python -m venv /path/to/new/virtual/environment
 ```
