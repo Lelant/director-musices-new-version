@@ -86,10 +86,9 @@ class ctkApp:
     def exportFile(self):
         scoreAndPerformance.export_performedPart_as_midi("rulegenerated_performance")
 
-    # TODO fix error here
     def exportGraphs(self):
         for key in scoreAndPerformance.graphs:
-            scoreAndPerformance.graphs[key].exportPng(key[0] + "-" + key[1])
+            scoreAndPerformance.graphs[key].exportPng(str(key[0]) + "-" + key[1])
         self.pianoRoll.exportPng('pianoRoll.png')
 
     def openScore(self):
