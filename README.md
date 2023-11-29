@@ -29,7 +29,7 @@ To start the tool, run the **main.py** file.
 
 ![GUI](dmn-gui.png)
 
-### The buttons and functions
+### Buttons
 - **Open a new score:** user can choose a new score (file formats: mei, musicxml, midi, humdrum **kern)
 - **Set voices:** if selected, the voice estimation algorithm estimates the voices and assigns them to the notes (useful if score has no voice markings)
 - **Open a midi performance:** user can choose a performance in midi format. The piece and the section/part should match the currently opened score!
@@ -38,6 +38,13 @@ To start the tool, run the **main.py** file.
 - **Show score as Graph:** if selected while pressing apply, a graph showing every voice as a line will be displayed (y-axis = midi-pitch, x-axis = time in quarternotes)
 - **Export Performance:** exports the rule generated performance as midi file (named "rulegenerated_performance.mid")
 - **Export Graphs:** exports all graphs and the piano roll as png files
+- **Add Rule:** opens an input dialog for the user to choose a rule to open. All available rules can be found in the dictionary in **rule_dictionary.py**
+- **Show Voices:** opens a window with checkboxes. The user can select which attribute (volume, duration, duration difference) of every voice will be opened as a graph
 
+### Rules
+- Every rule starts with a checkbox. When pressing apply, all selected rules will be applied.
+- Following the name of the rule, there is a number box and a slider. These control the quantity parameter for the rule. The user can adjust how big the effect of the rule should be.
+- Following are all parameters individual to the rule. Each parameter is labeled by name and has one input box for the value.
 
 ## Adding new rules
+

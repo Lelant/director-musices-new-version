@@ -86,6 +86,7 @@ class ctkApp:
     def exportFile(self):
         scoreAndPerformance.export_performedPart_as_midi("rulegenerated_performance.mid")
 
+    # TODO fix error here
     def exportGraphs(self):
         for key in scoreAndPerformance.graphs:
             scoreAndPerformance.graphs[key].exportPng(key[0] + "-" + key[1])
