@@ -62,7 +62,7 @@ class ctkApp:
 
         self.inputFiletypes = (('score files', '*.mid *.musicxml *.krn *mei'), ('midi files', '*.mid'), ('all files', '*.*'))
 
-        self.testScorePath = "test_files/Mozart_copy.musicxml"
+        self.testScorePath = "test_files/Mozart_K331_1st-mov_4bars.musicxml"
         self.currentScoreLabel.configure(text=os.path.basename(self.testScorePath))
 
         scoreAndPerformance.loadScore(self.testScorePath, self.frameGraphs)
@@ -84,7 +84,7 @@ class ctkApp:
         self.ctkRoot.mainloop()
 
     def exportFile(self):
-        scoreAndPerformance.export_performedPart_as_midi("rulegenerated_performance.mid")
+        scoreAndPerformance.export_performedPart_as_midi("rulegenerated_performance")
 
     # TODO fix error here
     def exportGraphs(self):
