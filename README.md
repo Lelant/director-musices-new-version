@@ -1,4 +1,4 @@
-# Director Musices Novus
+# Director Musices New Version
 This tool is a new version of **Director Musices** created as part of my master thesis. 
 
 For more information on the original **Director Musices** follow these links:
