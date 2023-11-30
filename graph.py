@@ -49,7 +49,7 @@ class Graph:
         self.canvas.get_tk_widget().grid_forget()
 
     def exportPng(self, filename):
-        self.fig.savefig("exportet_graphs/" + filename)
+        self.fig.savefig("exported_graphs/" + filename)
 
 class PianoRoll:
 
@@ -65,4 +65,4 @@ class PianoRoll:
         self.canvas.get_tk_widget().grid(column=0, row=row)
 
     def exportPng(self, filename):
-        self.fig.savefig("exportet_graphs/" + filename)
+        self.fig.savefig("exported_graphs/" + filename)
