@@ -29,6 +29,7 @@ class ScoreAndPerformance:
 
         except Exception as error:
             print("ERROR while loading score file and merging into one part:", type(error).__name__, "-", error)
+            print("Trying a different loading method now...")
             return False
         
         return True
