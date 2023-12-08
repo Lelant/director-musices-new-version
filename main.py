@@ -133,6 +133,7 @@ class ctkApp:
         
         if scoreLoaded:
             self.currentScoreLabel.configure(text=os.path.basename(filepath))
+            self.currentPerformanceLabel.configure(text="No performance loaded")
 
             self.update_graphs()
 

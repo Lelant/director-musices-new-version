@@ -92,8 +92,9 @@ class ScoreAndPerformance:
         self.setNominalDurations()
         self.setNominalSoundLevels()
 
-        if self.loadedPerformedPart != None:
-            self.alignPerformanceToScore(self.loadedPerformedPart)
+        # remove loaded performance if a new score is loaded
+
+        self.loadedPerformedPart = None
 
         # setup graphs
         self.setupScoreGraph()
