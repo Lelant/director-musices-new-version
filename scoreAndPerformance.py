@@ -33,7 +33,7 @@ class ScoreAndPerformance:
             return False
         
         return True
-            
+
     # returns 0 for error and no parts
     # returns 1 if score has one part
     # returns 2 if score has more than one part
