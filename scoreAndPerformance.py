@@ -266,7 +266,7 @@ class ScoreAndPerformance:
     def export_performedPart_as_midi(self, filename):
         # change velocity according to sound_level
         for note in self.part.notes:
-            if get_attribute(note, "sound_level") != None:
+            if get_attribute(note, "sound_level") != None and get_performed_note(note) != None:
                 get_performed_note(note)['velocity'] = sound_level_to_velocity(get_attribute(note, "sound_level"))
         
         pt.save_performance_midi(self.performedPart, filename+".mid")
@@ -513,18 +513,23 @@ def get_idx_of_note_at_duration_sum(start_idx, current_note_list, duration_sum):
 # --------------------------------------------
 
 def set_duration(_note, value, noteIdx, currentNotesAndRestsOfSameVoice):
-    difference = value - get_property_from_performed_note_array(get_performed_note(_note), 'duration_sec')
+    if get_performed_note(_note) != None:
+        if get_property_from_performed_note_array(get_performed_note(_note), 'duration_sec') != None:
+            difference = value - get_property_from_performed_note_array(get_performed_note(_note), 'duration_sec')
 
-    set_attribute_using_performed_note_array(get_performed_note(_note), 'duration_sec', value)
+            set_attribute_using_performed_note_array(get_performed_note(_note), 'duration_sec', value)
 
-    for i in range(noteIdx+1, len(currentNotesAndRestsOfSameVoice)):
-        add_attribute_using_performed_note_array(get_performed_note(currentNotesAndRestsOfSameVoice[i]), 'onset_sec', difference)
+            for i in range(noteIdx+1, len(currentNotesAndRestsOfSameVoice)):
+                if get_performed_note(currentNotesAndRestsOfSameVoice[i]) != None:
+                    add_attribute_using_performed_note_array(get_performed_note(currentNotesAndRestsOfSameVoice[i]), 'onset_sec', difference)
 
 def add_duration(_note, value, noteIdx, currentNotesAndRestsOfSameVoice):
-    add_attribute_using_performed_note_array(get_performed_note(_note), 'duration_sec', value)
+    if get_performed_note(_note) != None:
+        add_attribute_using_performed_note_array(get_performed_note(_note), 'duration_sec', value)
 
     for i in range(noteIdx+1, len(currentNotesAndRestsOfSameVoice)):
-        add_attribute_using_performed_note_array(get_performed_note(currentNotesAndRestsOfSameVoice[i]), 'onset_sec', value)
+        if get_performed_note(currentNotesAndRestsOfSameVoice[i]):
+            add_attribute_using_performed_note_array(get_performed_note(currentNotesAndRestsOfSameVoice[i]), 'onset_sec', value)
 
 def get_chord_pitches(note, same_duration=True, same_voice=True):
     chord_pitches = []
@@ -565,13 +570,14 @@ def get_attribute(_note, attribute):
         if attribute in scoreAndPerformance.part.note_array().dtype.names:
             return get_property_from_part_note_array(_note, attribute)
 
-        # if the note is a performed note and the attribute is only in the note_array
-        if attribute in scoreAndPerformance.performedPart.note_array().dtype.names:
-            return get_property_from_performed_note_array(get_performed_note(_note), attribute)
+        if get_performed_note(_note) != None:
+            # if the note is a performed note and the attribute is only in the note_array
+            if attribute in scoreAndPerformance.performedPart.note_array().dtype.names:
+                return get_property_from_performed_note_array(get_performed_note(_note), attribute)
 
-        # else try to get the attribute from the performed note
-        else:
-            return get_performed_note(_note)[attribute]
+            # else try to get the attribute from the performed note
+            else:
+                return get_performed_note(_note)[attribute]
     except:
         return None
 
