@@ -54,6 +54,12 @@ class ScoreAndPerformance:
 
             except Exception as error:
                 print("ERROR while loading score file:", type(error).__name__, "-", error)
+                
+                try:
+                    self.part = pt.load_score(path)
+                    print("num of parts is: {0}".format(len(self.part.parts)))
+                except Exception as error:
+                    print("ERROR while loading score file with different approach:", type(error).__name__, "-", error)                
 
         else:
             print("The file extension {0} is note supported! No score loaded.".format(file_extension))
