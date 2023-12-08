@@ -1,6 +1,7 @@
 import os
 import customtkinter
 from tkinter import filedialog
+from choose_part_window import ChoosePartWindow
 from scoreAndPerformance import scoreAndPerformance
 from graph import PianoRoll
 from rule_dictionary import allRules
@@ -10,6 +11,8 @@ class ctkApp:
 
     num_open_rules = 0
     all_open_rules = []
+
+    scoreFileExtensions = [".musicxml", ".mei", ".mid", ".krn"]
 
     def __init__(self):
         customtkinter.set_appearance_mode("system")
@@ -21,6 +24,7 @@ class ctkApp:
         self.ctkRoot.update()
 
         self.show_voices_window = None
+        self.choose_part_window = None
 
         self.frameControlls = customtkinter.CTkScrollableFrame(master=self.ctkRoot, width=200, orientation='vertical')
         self.frameControlls.place(x=0, y=0, relheight=1)
@@ -65,7 +69,10 @@ class ctkApp:
         self.testScorePath = "test_files/Mozart_K331_1st-mov_4bars.musicxml"
         self.currentScoreLabel.configure(text=os.path.basename(self.testScorePath))
 
-        scoreAndPerformance.loadScore(self.testScorePath, self.frameGraphs)
+        scoreAndPerformance.setFrameGraphs(self.frameGraphs)
+
+        scoreAndPerformance.loadScoreAsOnePart(self.testScorePath)
+        scoreAndPerformance.setupPart(self.setVoicesVar.get())
 
         self.pianoRoll = PianoRoll(scoreAndPerformance.getPianoRoll(), self.frameGraphs)
 
@@ -92,22 +99,56 @@ class ctkApp:
         self.pianoRoll.exportPng('pianoRoll.png')
 
     def openScore(self):
+        scoreLoaded = False
         filepath = filedialog.askopenfilename(title="Choose a score", filetypes=self.inputFiletypes)
-        print(filepath)
         if filepath == "":
             return
-        scoreAndPerformance.loadScore(filepath, self.frameGraphs, self.setVoicesVar.get())
-        self.currentScoreLabel.configure(text=os.path.basename(filepath))
 
-        self.update_graphs()
+        path_no_extension, file_extension = os.path.splitext(filepath)
+        if not file_extension in self.scoreFileExtensions:
+            print("The file extension {0} is not allowed. Please use one of these: .musicxml, .mei, .mid, .krn".format(file_extension))
+            return
 
-        for rule in self.all_open_rules:
-            rule.checkbox.deselect()
+        scoreLoaded = scoreAndPerformance.loadScoreAsOnePart(filepath)
+
+        if not scoreLoaded:
+            caseResult = scoreAndPerformance.loadScoreWithMultipleParts(filepath)
+            if caseResult == 0:
+                return
+            if caseResult == 1:
+                scoreAndPerformance.setupPart(self.setVoicesVar.get())
+                scoreLoaded = True
+            elif caseResult == 2:
+                # let user choose a part
+                chosenPart = self.open_choose_part_dialog()
+                if chosenPart == None:
+                    return
+                else:
+                    scoreAndPerformance.part = chosenPart
+                    scoreAndPerformance.setupPart(self.setVoicesVar.get())
+                    scoreLoaded = True
+
+        else:
+            scoreAndPerformance.setupPart(self.setVoicesVar.get())
+        
+        if scoreLoaded:
+            self.currentScoreLabel.configure(text=os.path.basename(filepath))
+
+            self.update_graphs()
+
+            for rule in self.all_open_rules:
+                rule.checkbox.deselect()
+        else:
+            return
 
     def openPerformance(self):
         filepath = filedialog.askopenfilename(title="Choose a midi performance", filetypes=self.inputFiletypes)
-        print(filepath)
         if filepath == "":
+            return
+        
+        path_no_extension, file_extension = os.path.splitext(filepath)
+        if not file_extension in self.scoreFileExtensions:
+            print("The file extension {0} is not allowed. Please use .mid".format(file_extension))
             return
         
         scoreAndPerformance.loadPerformance(filepath)
@@ -197,6 +238,16 @@ class ctkApp:
         newrule = allRules[rulename](frame=self.frameRules, row=self.num_open_rules, column=0)
         self.num_open_rules = self.num_open_rules + 1
         self.all_open_rules.append(newrule)
+
+    def open_choose_part_dialog(self):
+        if self.choose_part_window is None or not self.choose_part_window.winfo_exists():
+            self.choose_part_window = ChoosePartWindow(scoreAndPerformance.partsTemp)
+            chosenPart = self.choose_part_window.wait_for_values()
+
+            if chosenPart != None:
+                return chosenPart
+        else:
+            self.choose_part_window.focus()
 
     def show_voices(self):
         if self.show_voices_window is None or not self.show_voices_window.winfo_exists():

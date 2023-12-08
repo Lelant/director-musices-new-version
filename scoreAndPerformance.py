@@ -16,72 +16,118 @@ class ScoreAndPerformance:
         self.graphs = None
         self.scoreGraph = None
 
-    def loadScore(self, path: str, frameGraphs, setVoices=False):
+    def setFrameGraphs(self, frameGraphs):
         self.frameGraphs = frameGraphs
-        path_no_extension, file_extension = os.path.splitext(path)
-        if file_extension == ".musicxml" or file_extension == ".mei" or file_extension == ".mid" or file_extension == ".krn":
 
-            self.forget_all_graphs()
+    def loadScoreAsOnePart(self, path: str):
 
+        self.forget_all_graphs()
+
+        try:
+            # try merging the score into one part
             self.part = pt.load_score_as_part(path)
 
-            # create list of all notes and rests
-            self.notesAndRests = self.makeListOfAllNotesAndRests()
+        except Exception as error:
+            print("ERROR while loading score file and merging into one part:", type(error).__name__, "-", error)
+            print("Trying a different loading method now...")
+            return False
+        
+        return True
 
-            if not self.allNotesMarkedWithVoice():
-                self.estimate_and_set_voices()
-            elif setVoices:
-                self.estimate_and_set_voices()
+    # returns 0 for error and no parts
+    # returns 1 if score has one part
+    # returns 2 if score has more than one part
+    def loadScoreWithMultipleParts(self, path: str):
 
-            self.performedPart = ptmusic.performance_from_part(self.part)
+        try:
+            score = pt.load_score(path)
 
-            self.removeAllTickInfoFromPerformance()
+            numberOfParts = len(score.parts)
 
-            self.setNominalDurations()
-            self.setNominalSoundLevels()
+            if numberOfParts < 1:
+                print("Score has no parts.")
+                return 0
+            elif numberOfParts == 1:
+                self.part = score.parts[0]
+                return 1
+            else:
+                # let user choose a part
+                self.partsTemp = score.parts
+                return 2
 
-            if self.loadedPerformedPart != None:
-                self.alignPerformanceToScore(self.loadedPerformedPart)
+            #     score = pt.load_score(path)
+            #     print("This score has {0} parts.".format(len(score.parts)))
+            #     if len(score.parts) > 0:
 
-            # setup graphs
-            self.setupScoreGraph()
-            self.setupGraphs()
+            #         for part in score.parts:
+            #             if part.part_name != None:
+            #                 print("Part name: {0}".format(part.part_name))
+            #             if part.part_abbreviation != None:
+            #                 print("Part abbreviation: {0}".format(part.part_abbreviation))
+            #             print("Notes in part: {0}".format(len(part.notes)))
 
-            # self.setChordInfos()
+            #         self.part = score.parts[0]
 
-            print("Finished loading the score.")
-        else:
-            print("The file extension {0} is note supported! No score loaded.".format(file_extension))
+            #     else:
+            #         raise 
+
+        except Exception as error:
+            print("ERROR while loading score file:", type(error).__name__, "-", error)
+            return 0
+        
+    def setupPart(self, setVoices: bool):
+
+        # create list of all notes and rests
+        self.notesAndRests = self.makeListOfAllNotesAndRests()
+
+        if not self.allNotesMarkedWithVoice():
+            self.estimate_and_set_voices()
+        elif setVoices:
+            self.estimate_and_set_voices()
+
+        self.performedPart = ptmusic.performance_from_part(self.part)
+
+        self.removeAllTickInfoFromPerformance()
+
+        self.setNominalDurations()
+        self.setNominalSoundLevels()
+
+        if self.loadedPerformedPart != None:
+            self.alignPerformanceToScore(self.loadedPerformedPart)
+
+        # setup graphs
+        self.setupScoreGraph()
+        self.setupGraphs()
+
+        # self.setChordInfos()
+
+        print("Finished setting up the part.")
 
     # this can only be called if loadScore has run once
     def loadPerformance(self, path: str):
-        path_no_extension, file_extension = os.path.splitext(path)
-        if file_extension == ".mid":
 
-            self.forget_all_graphs()
+        self.forget_all_graphs()
 
-            loadedPerformance = pt.load_performance_midi(path)
-            print("The loaded performance has {0} parts.".format(len(loadedPerformance.performedparts)))
-            self.loadedPerformedPart = loadedPerformance.performedparts[0]
+        loadedPerformance = pt.load_performance_midi(path)
+        print("The loaded performance has {0} parts.".format(len(loadedPerformance.performedparts)))
+        self.loadedPerformedPart = loadedPerformance.performedparts[0]
 
-            # set the same ids
-            self.alignPerformanceToScore(self.loadedPerformedPart)
+        # set the same ids
+        self.alignPerformanceToScore(self.loadedPerformedPart)
 
-            print("Finished loading the performance.")
-        else:
-            print("The file extension {0} is note supported! No performance loaded.".format(file_extension))
+        print("Finished loading the performance.")
 
     def makeListOfAllNotesAndRests(self):
         print("Creating list of all notes and rests...")
         l = []
-        for obj in scoreAndPerformance.part.iter_all():
+        for obj in self.part.iter_all():
             if isinstance(obj, pt.score.Note) or isinstance(obj, pt.score.Rest):
                 l.append(obj)
         print("Done")
         return l
     
     def removeAllTickInfoFromPerformance(self):
-        for n in scoreAndPerformance.performedPart.notes:
+        for n in self.performedPart.notes:
             n.pop('note_on_tick', None)
             n.pop('note_off_tick', None)
 
