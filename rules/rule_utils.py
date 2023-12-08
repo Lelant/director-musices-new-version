@@ -202,14 +202,15 @@ def iadd_ramp_x2_decimal_last(notes, i_from, i_to, sdisp, edisp, sval, eval, pro
     initdur = 0.0
 
     if sdisp > 0:
-        initdur = get_attribute(notes[i_from], "nominal_duration") - sdisp
-        i_from = i_from + 1
+        if get_attribute(notes[i_from], "nominal_duration") != None:
+            initdur = get_attribute(notes[i_from], "nominal_duration") - sdisp
+            i_from = i_from + 1
 
     etime = get_nominal_duration_sum(i_from, i_to, notes) + initdur + edisp
 
     if not etime > 0.0:
         print("WARNING: The segment does not have a positive duration")
-    else:
+    elif get_attribute(notes[i], "nominal_duration") != None:
         if sval <= eval:
             time = initdur
             for i in range(i_from, i_to):

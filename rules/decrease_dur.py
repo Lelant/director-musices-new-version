@@ -82,7 +82,8 @@ class DecreaseDur(Rule):
         for noteRest in scoreAndPerformance.part.notes:
             if get_note_value_fraction(noteRest) < smallest_fraction_found:
                 smallest_fraction_found = get_note_value_fraction(noteRest)
-                ndr_of_smallest_found = get_attribute(noteRest, "nominal_duration")
+                if get_attribute(noteRest, "nominal_duration") != None:
+                    ndr_of_smallest_found = get_attribute(noteRest, "nominal_duration")
 
         nominal_duration_of_smallest_fraction = ndr_of_smallest_found / (smallest_fraction_found / smallest_fraction)
 

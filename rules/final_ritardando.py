@@ -41,7 +41,8 @@ class FinalRitardando(Rule):
 
                     while ndrtot < length and istart > 0:
                         istart -= 1
-                        ndrtot += get_attribute(collection[istart], 'nominal_duration')
+                        if get_attribute(collection[istart], 'nominal_duration') != None:
+                            ndrtot += get_attribute(collection[istart], 'nominal_duration')
 
                     xoff = 0
                     exponent = (self.qInput.value.get() - 1.0) / self.qInput.value.get()
@@ -52,14 +53,15 @@ class FinalRitardando(Rule):
                     toff = 0
 
                     for i in range(istart, idx):
-                        xoff = (get_attribute(collection[i], 'nominal_duration') / ndrtot) + xoff
-                        ton = toff
-                        toff = (((((k * xoff) + 1)**exponent) * self.qInput.value.get()) / namnare) + const
+                        if get_attribute(collection[i], 'nominal_duration') != None and get_attribute(collection[i], 'duration_sec') != None:
+                            xoff = (get_attribute(collection[i], 'nominal_duration') / ndrtot) + xoff
+                            ton = toff
+                            toff = (((((k * xoff) + 1)**exponent) * self.qInput.value.get()) / namnare) + const
 
-                        # TODO: get_attribute can return None, catch error somehow
-                        # (happens when quant is too much in the negative)
-                        addValue = get_attribute(collection[i], 'duration_sec') * ((ndrtot * (toff - ton)) / get_attribute(collection[i], 'nominal_duration'))
-                        add_attribute(collection[i], 'duration_sec', addValue)
+                            # TODO: get_attribute can return None, catch error somehow
+                            # (happens when quant is too much in the negative)
+                            addValue = get_attribute(collection[i], 'duration_sec') * ((ndrtot * (toff - ton)) / get_attribute(collection[i], 'nominal_duration'))
+                            add_attribute(collection[i], 'duration_sec', addValue)
 
         self.final_ritardando_last_note()
 
@@ -73,5 +75,6 @@ class FinalRitardando(Rule):
             for idx, note in enumerate(collection):
                 idx = get_idx_of_last_obj(collection)
 
-                if (get_attribute(collection[idx], 'duration_sec') * factor) < get_attribute(collection[idx-1], 'duration_sec'):
-                    set_attribute(collection[idx], 'duration_sec', get_attribute(collection[idx-1], 'duration_sec') * factor)
+                if get_attribute(collection[idx], 'duration_sec') != None and get_attribute(collection[idx-1], 'duration_sec') != None:
+                    if (get_attribute(collection[idx], 'duration_sec') * factor) < get_attribute(collection[idx-1], 'duration_sec'):
+                        set_attribute(collection[idx], 'duration_sec', get_attribute(collection[idx-1], 'duration_sec') * factor)
