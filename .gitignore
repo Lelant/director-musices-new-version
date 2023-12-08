@@ -130,7 +130,7 @@ venv.bak/
 
 dmn-venv/
 
-tempPerformanceForPlayback.mid
+.tempPerformanceForPlayback.mid
 
 # Spyder project settings
 .spyderproject
