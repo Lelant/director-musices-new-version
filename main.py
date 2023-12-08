@@ -11,6 +11,8 @@ class ctkApp:
     num_open_rules = 0
     all_open_rules = []
 
+    scoreFileExtensions = [".musicxml", ".mei", ".mid", ".krn"]
+
     def __init__(self):
         customtkinter.set_appearance_mode("system")
         customtkinter.set_default_color_theme("blue")
@@ -93,9 +95,14 @@ class ctkApp:
 
     def openScore(self):
         filepath = filedialog.askopenfilename(title="Choose a score", filetypes=self.inputFiletypes)
-        print(filepath)
         if filepath == "":
             return
+
+        path_no_extension, file_extension = os.path.splitext(filepath)
+        if not file_extension in self.scoreFileExtensions:
+            print("The file extension {0} is not allowed. Please use one of these: .musicxml, .mei, .mid, .krn".format(file_extension))
+            return
+
         scoreAndPerformance.loadScore(filepath, self.frameGraphs, self.setVoicesVar.get())
         self.currentScoreLabel.configure(text=os.path.basename(filepath))
 
@@ -106,8 +113,12 @@ class ctkApp:
 
     def openPerformance(self):
         filepath = filedialog.askopenfilename(title="Choose a midi performance", filetypes=self.inputFiletypes)
-        print(filepath)
         if filepath == "":
+            return
+        
+        path_no_extension, file_extension = os.path.splitext(filepath)
+        if not file_extension in self.scoreFileExtensions:
+            print("The file extension {0} is not allowed. Please use .mid".format(file_extension))
             return
         
         scoreAndPerformance.loadPerformance(filepath)
