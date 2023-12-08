@@ -16,8 +16,10 @@ class ScoreAndPerformance:
         self.graphs = None
         self.scoreGraph = None
 
-    def loadScore(self, path: str, frameGraphs, setVoices=False):
+    def setFrameGraphs(self, frameGraphs):
         self.frameGraphs = frameGraphs
+
+    def loadScoreAsOnePart(self, path: str):
 
         self.forget_all_graphs()
 
@@ -27,29 +29,52 @@ class ScoreAndPerformance:
 
         except Exception as error:
             print("ERROR while loading score file and merging into one part:", type(error).__name__, "-", error)
+            return False
+        
+        return True
             
-            try:
-                # if merging into one part is not possible
-                # load score normally and let user choose the part
+    # returns 0 for error and no parts
+    # returns 1 if score has one part
+    # returns 2 if score has more than one part
+    def loadScoreWithMultipleParts(self, path: str):
 
-                score = pt.load_score(path)
-                print("This score has {0} parts.".format(len(score.parts)))
-                if len(score.parts) > 0:
+        try:
+            score = pt.load_score(path)
 
-                    for part in score.parts:
-                        if part.part_name != None:
-                            print("Part name: {0}".format(part.part_name))
-                        if part.part_abbreviation != None:
-                            print("Part abbreviation: {0}".format(part.part_abbreviation))
-                        print("Notes in part: {0}".format(len(part.notes)))
+            numberOfParts = len(score.parts)
 
-                    self.part = score.parts[0]
+            if numberOfParts < 1:
+                print("Score has no parts.")
+                return 0
+            elif numberOfParts == 1:
+                self.part = score.parts[0]
+                return 1
+            else:
+                # let user choose a part
+                self.partsTemp = score.parts
+                return 2
 
-                else:
-                    raise 
+            #     score = pt.load_score(path)
+            #     print("This score has {0} parts.".format(len(score.parts)))
+            #     if len(score.parts) > 0:
 
-            except Exception as error:
-                print("ERROR while loading score file and selecting part:", type(error).__name__, "-", error)
+            #         for part in score.parts:
+            #             if part.part_name != None:
+            #                 print("Part name: {0}".format(part.part_name))
+            #             if part.part_abbreviation != None:
+            #                 print("Part abbreviation: {0}".format(part.part_abbreviation))
+            #             print("Notes in part: {0}".format(len(part.notes)))
+
+            #         self.part = score.parts[0]
+
+            #     else:
+            #         raise 
+
+        except Exception as error:
+            print("ERROR while loading score file:", type(error).__name__, "-", error)
+            return 0
+        
+    def setupPart(self, setVoices: bool):
 
         # create list of all notes and rests
         self.notesAndRests = self.makeListOfAllNotesAndRests()
@@ -75,9 +100,7 @@ class ScoreAndPerformance:
 
         # self.setChordInfos()
 
-        print("Finished loading the score.")
-        return True
-
+        print("Finished setting up the part.")
 
     # this can only be called if loadScore has run once
     def loadPerformance(self, path: str):
@@ -96,14 +119,14 @@ class ScoreAndPerformance:
     def makeListOfAllNotesAndRests(self):
         print("Creating list of all notes and rests...")
         l = []
-        for obj in scoreAndPerformance.part.iter_all():
+        for obj in self.part.iter_all():
             if isinstance(obj, pt.score.Note) or isinstance(obj, pt.score.Rest):
                 l.append(obj)
         print("Done")
         return l
     
     def removeAllTickInfoFromPerformance(self):
-        for n in scoreAndPerformance.performedPart.notes:
+        for n in self.performedPart.notes:
             n.pop('note_on_tick', None)
             n.pop('note_off_tick', None)
 
