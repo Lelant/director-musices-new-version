@@ -11,8 +11,8 @@ class ChoosePartWindow(customtkinter.CTkToplevel):
         self.frameOptions = customtkinter.CTkFrame(master=self)
         self.frameOptions.place(x=0, y=0, relheight=0.8, relwidth=1)
 
-        self.frameOptions.columnconfigure(len(possibleParts), weight=1, uniform='v')
-        self.frameOptions.rowconfigure(4, weight=1, uniform='v')
+        self.frameOptions.columnconfigure(1, weight=1, uniform='v')
+        self.frameOptions.rowconfigure(len(possibleParts), weight=1, uniform='v')
 
         self.frameButtons = customtkinter.CTkFrame(master=self)
         self.frameButtons.place(x=0, rely=0.8, relheight=0.2, relwidth=1)
@@ -20,7 +20,7 @@ class ChoosePartWindow(customtkinter.CTkToplevel):
         self.checkboxesAndVars = dict()
 
         for idx, part in enumerate(possibleParts):
-            if part.part_name != None:
+            if part.part_name != None and part.part_name != "":
                 partname = ": "+part.part_name
             else:
                 partname = ""
@@ -30,9 +30,9 @@ class ChoosePartWindow(customtkinter.CTkToplevel):
             checkBox = customtkinter.CTkCheckBox(master=self.frameOptions, text="Part "+str(idx+1)+partname, variable=partVar)
             action_with_arg = partial(self.checkbox_ticked, idx)
             checkBox.configure(command= action_with_arg)
-            checkBox.grid(column=idx, row=1, padx=10, pady=10, sticky='w')
+            checkBox.grid(column=0, row=idx, padx=10, pady=10, sticky='w')
 
-            self.checkboxesAndVars[str(idx)] = [checkBox, partVar]
+            self.checkboxesAndVars[str(idx)] = [checkBox, partVar, part]
 
         self.submitButton = customtkinter.CTkButton(master=self.frameButtons, text="Apply", command=self.applyPressed)
         self.closeButton = customtkinter.CTkButton(master=self.frameButtons, text="Cancel", command=self.cancelPressed)
@@ -43,14 +43,15 @@ class ChoosePartWindow(customtkinter.CTkToplevel):
         self.returnValue = None
 
     def checkbox_ticked(self, index):
-        print("checkbox ticked"+str(index))
-
         for key in self.checkboxesAndVars:
             if key != str(index):
                 self.checkboxesAndVars[key][1].set(0)
 
     def applyPressed(self):
-        self.returnValue = self.checkboxes
+        for key in self.checkboxesAndVars:
+            if self.checkboxesAndVars[key][1].get():
+                self.returnValue = self.checkboxesAndVars[key][2]
+                break
         self.destroy()
 
     def cancelPressed(self):

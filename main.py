@@ -109,7 +109,7 @@ class ctkApp:
             print("The file extension {0} is not allowed. Please use one of these: .musicxml, .mei, .mid, .krn".format(file_extension))
             return
 
-        scoreLoaded = scoreAndPerformance.loadScoreAsOnePart(filepath) #self.frameGraphs, self.setVoicesVar.get())
+        scoreLoaded = scoreAndPerformance.loadScoreAsOnePart(filepath)
 
         if not scoreLoaded:
             caseResult = scoreAndPerformance.loadScoreWithMultipleParts(filepath)
@@ -117,6 +117,7 @@ class ctkApp:
                 return
             if caseResult == 1:
                 scoreAndPerformance.setupPart(self.setVoicesVar.get())
+                scoreLoaded = True
             elif caseResult == 2:
                 # let user choose a part
                 chosenPart = self.open_choose_part_dialog()
@@ -125,6 +126,7 @@ class ctkApp:
                 else:
                     scoreAndPerformance.part = chosenPart
                     scoreAndPerformance.setupPart(self.setVoicesVar.get())
+                    scoreLoaded = True
 
         else:
             scoreAndPerformance.setupPart(self.setVoicesVar.get())
