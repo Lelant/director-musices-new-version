@@ -330,7 +330,10 @@ class ScoreAndPerformance:
                 if nominal_duration == None:
                     difference = 0.0
                 else:
-                    difference = round(get_attribute(note, 'duration_sec') - nominal_duration, 5)
+                    if get_attribute(note, 'duration_sec') == None:
+                        difference = None
+                    else:
+                        difference = round(get_attribute(note, 'duration_sec') - nominal_duration, 5)
                 datalist.append(difference)
 
         return datalist
@@ -357,7 +360,10 @@ class ScoreAndPerformance:
                     if nominal_duration == None:
                         difference = 0.0
                     else:
-                        difference = round(get_property_from_loaded_performed_note_array(note, 'duration_sec') - nominal_duration, 5)
+                        if get_property_from_loaded_performed_note_array(note, 'duration_sec') == None:
+                            difference = None
+                        else:
+                            difference = round(get_property_from_loaded_performed_note_array(note, 'duration_sec') - nominal_duration, 5)
                     datalist.append(difference)
 
         return datalist
@@ -483,13 +489,15 @@ def get_measure_number(note):
 def get_nominal_duration_sum(idx_from, idx_to, current_note_list):
     sumValue = 0.0
     for idx in range(idx_from, idx_to):
-        sumValue += get_attribute(current_note_list[idx], 'nominal_duration')
+        if get_attribute(current_note_list[idx], 'nominal_duration') != None:
+            sumValue += get_attribute(current_note_list[idx], 'nominal_duration')
     return sumValue
 
 def get_duration_sum(idx_from, idx_to, current_note_list):
     sumValue = 0.0
     for idx in range(idx_from, idx_to):
-        sumValue += get_attribute(current_note_list[idx], 'duration_sec')
+        if get_attribute(current_note_list[idx], 'duration_sec') != None:
+            sumValue += get_attribute(current_note_list[idx], 'duration_sec')
     return sumValue
 
 def get_idx_of_note_at_duration_sum(start_idx, current_note_list, duration_sum):
@@ -497,7 +505,8 @@ def get_idx_of_note_at_duration_sum(start_idx, current_note_list, duration_sum):
     for idx in range(start_idx, len(current_note_list)):
         if sumValue >= duration_sum:
             return idx
-        sumValue += get_attribute(current_note_list[idx], 'duration_sec')
+        if get_attribute(current_note_list[idx], 'duration_sec') != None:
+            sumValue += get_attribute(current_note_list[idx], 'duration_sec')
 
 # --------------------------------------------
 # Methods for adding and setting performance note values
