@@ -194,10 +194,10 @@ class ScoreAndPerformance:
         return array
 
     def playScore(self):
-        self.export_performedPart_as_midi("temp_files/tempPerformanceForPlayback")
+        self.export_performedPart_as_midi(".temp_files/tempPerformanceForPlayback")
 
         pygame.init()
-        pygame.mixer.music.load("temp_files/tempPerformanceForPlayback.mid")
+        pygame.mixer.music.load(".temp_files/tempPerformanceForPlayback.mid")
         pygame.mixer.music.play()
     
     def stopPlayback(self):
