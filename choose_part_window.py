@@ -1,5 +1,5 @@
 import customtkinter
-from util_functions import graphTitles
+from functools import partial
 
 class ChoosePartWindow(customtkinter.CTkToplevel):
 
@@ -8,52 +8,46 @@ class ChoosePartWindow(customtkinter.CTkToplevel):
         self.geometry("800x400")
         self.title("Choose a part")
 
-        # self.frameOptions = customtkinter.CTkFrame(master=self)
-        # self.frameOptions.place(x=0, y=0, relheight=0.8, relwidth=1)
+        self.frameOptions = customtkinter.CTkFrame(master=self)
+        self.frameOptions.place(x=0, y=0, relheight=0.8, relwidth=1)
 
-        # self.frameOptions.columnconfigure(len(voices), weight=1, uniform='v')
-        # self.frameOptions.rowconfigure(4, weight=1, uniform='v')
+        self.frameOptions.columnconfigure(len(possibleParts), weight=1, uniform='v')
+        self.frameOptions.rowconfigure(4, weight=1, uniform='v')
 
-        # self.frameButtons = customtkinter.CTkFrame(master=self)
-        # self.frameButtons.place(x=0, rely=0.8, relheight=0.2, relwidth=1)
+        self.frameButtons = customtkinter.CTkFrame(master=self)
+        self.frameButtons.place(x=0, rely=0.8, relheight=0.2, relwidth=1)
 
-        # # keys: tuple of voice and graph title
-        # self.checkboxes = dict()
+        self.checkboxesAndVars = dict()
 
-        # for idx, voice in enumerate(voices):
-        #     label = customtkinter.CTkLabel(master=self.frameOptions, text="Voice " + str(voice))
-        #     label.grid(column=idx, row=0, padx=10, pady=10)
+        for idx, part in enumerate(possibleParts):
+            if part.part_name != None:
+                partname = ": "+part.part_name
+            else:
+                partname = ""
 
-        #     var1 = customtkinter.BooleanVar(value=False)
-        #     var2 = customtkinter.BooleanVar(value=False)
-        #     var3 = customtkinter.BooleanVar(value=False)
+            partVar = customtkinter.BooleanVar(value=False)
 
-        #     if (voice, graphTitles[0]) in lastCheckboxes:
-        #         var1.set(lastCheckboxes[(voice, graphTitles[0])].get())
-        #     if (voice, graphTitles[1]) in lastCheckboxes:
-        #         var2.set(lastCheckboxes[(voice, graphTitles[1])].get())
-        #     if (voice, graphTitles[2]) in lastCheckboxes:
-        #         var3.set(lastCheckboxes[(voice, graphTitles[2])].get())
+            checkBox = customtkinter.CTkCheckBox(master=self.frameOptions, text="Part "+str(idx+1)+partname, variable=partVar)
+            action_with_arg = partial(self.checkbox_ticked, idx)
+            checkBox.configure(command= action_with_arg)
+            checkBox.grid(column=idx, row=1, padx=10, pady=10, sticky='w')
 
-        #     checkbox1 = customtkinter.CTkCheckBox(master=self.frameOptions, text="Volume", variable=var1)
-        #     checkbox2 = customtkinter.CTkCheckBox(master=self.frameOptions, text="Duration", variable=var2)
-        #     checkbox3 = customtkinter.CTkCheckBox(master=self.frameOptions, text="Duration Difference", variable=var3)
-            
-        #     checkbox1.grid(column=idx, row=1, padx=10, pady=10, sticky='w')
-        #     checkbox2.grid(column=idx, row=2, padx=10, pady=10, sticky='w')
-        #     checkbox3.grid(column=idx, row=3, padx=10, pady=10, sticky='w')
+            self.checkboxesAndVars[str(idx)] = [checkBox, partVar]
 
-        #     self.checkboxes[(voice, graphTitles[0])] = checkbox1
-        #     self.checkboxes[(voice, graphTitles[1])] = checkbox2
-        #     self.checkboxes[(voice, graphTitles[2])] = checkbox3
+        self.submitButton = customtkinter.CTkButton(master=self.frameButtons, text="Apply", command=self.applyPressed)
+        self.closeButton = customtkinter.CTkButton(master=self.frameButtons, text="Cancel", command=self.cancelPressed)
 
-        # self.submitButton = customtkinter.CTkButton(master=self.frameButtons, text="Apply", command=self.applyPressed)
-        # self.closeButton = customtkinter.CTkButton(master=self.frameButtons, text="Cancel", command=self.cancelPressed)
+        self.submitButton.place(relx=0.7, y=0)
+        self.closeButton.place(relx=0.3, y=0)
 
-        # self.submitButton.place(relx=0.7, y=0)
-        # self.closeButton.place(relx=0.3, y=0)
+        self.returnValue = None
 
-        # self.returnValue = None
+    def checkbox_ticked(self, index):
+        print("checkbox ticked"+str(index))
+
+        for key in self.checkboxesAndVars:
+            if key != str(index):
+                self.checkboxesAndVars[key][1].set(0)
 
     def applyPressed(self):
         self.returnValue = self.checkboxes

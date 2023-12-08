@@ -71,7 +71,8 @@ class ctkApp:
 
         scoreAndPerformance.setFrameGraphs(self.frameGraphs)
 
-        scoreAndPerformance.loadScore(self.testScorePath)
+        scoreAndPerformance.loadScoreAsOnePart(self.testScorePath)
+        scoreAndPerformance.setupPart(self.setVoicesVar.get())
 
         self.pianoRoll = PianoRoll(scoreAndPerformance.getPianoRoll(), self.frameGraphs)
 
