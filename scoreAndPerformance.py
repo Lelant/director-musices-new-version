@@ -23,33 +23,38 @@ class ScoreAndPerformance:
 
             self.forget_all_graphs()
 
-            self.part = pt.load_score_as_part(path)
+            try:
+                self.part = pt.load_score_as_part(path)
 
-            # create list of all notes and rests
-            self.notesAndRests = self.makeListOfAllNotesAndRests()
+                # create list of all notes and rests
+                self.notesAndRests = self.makeListOfAllNotesAndRests()
 
-            if not self.allNotesMarkedWithVoice():
-                self.estimate_and_set_voices()
-            elif setVoices:
-                self.estimate_and_set_voices()
+                if not self.allNotesMarkedWithVoice():
+                    self.estimate_and_set_voices()
+                elif setVoices:
+                    self.estimate_and_set_voices()
 
-            self.performedPart = ptmusic.performance_from_part(self.part)
+                self.performedPart = ptmusic.performance_from_part(self.part)
 
-            self.removeAllTickInfoFromPerformance()
+                self.removeAllTickInfoFromPerformance()
 
-            self.setNominalDurations()
-            self.setNominalSoundLevels()
+                self.setNominalDurations()
+                self.setNominalSoundLevels()
 
-            if self.loadedPerformedPart != None:
-                self.alignPerformanceToScore(self.loadedPerformedPart)
+                if self.loadedPerformedPart != None:
+                    self.alignPerformanceToScore(self.loadedPerformedPart)
 
-            # setup graphs
-            self.setupScoreGraph()
-            self.setupGraphs()
+                # setup graphs
+                self.setupScoreGraph()
+                self.setupGraphs()
 
-            # self.setChordInfos()
+                # self.setChordInfos()
 
-            print("Finished loading the score.")
+                print("Finished loading the score.")
+
+            except Exception as error:
+                print("ERROR while loading score file:", type(error).__name__, "-", error)
+
         else:
             print("The file extension {0} is note supported! No score loaded.".format(file_extension))
 
