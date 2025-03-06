@@ -129,8 +129,8 @@ class ScoreAndPerformance:
     
     def removeAllTickInfoFromPerformance(self):
         for n in self.performedPart.notes:
-            n.pop('note_on_tick', None)
-            n.pop('note_off_tick', None)
+            n.pnote_dict.pop('note_on_tick', None)
+            n.pnote_dict.pop('note_off_tick', None)
 
     def setNominalDurations(self):
         print("Setting the nominal durations...")
