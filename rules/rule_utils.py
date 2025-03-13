@@ -210,25 +210,27 @@ def iadd_ramp_x2_decimal_last(notes, i_from, i_to, sdisp, edisp, sval, eval, pro
 
     if not etime > 0.0:
         print("WARNING: The segment does not have a positive duration")
-    elif get_attribute(notes[i], "nominal_duration") != None:
+    else:
         if sval <= eval:
             time = initdur
             for i in range(i_from, i_to):
-                addValue = sval + ((eval - sval) * decfn(time / etime, power))
-                if prop == "duration":
-                    add_duration(notes[i], addValue, i, notes)
-                else:
-                    add_attribute(notes[i], prop, addValue)
-                time = time + get_attribute(notes[i], "nominal_duration")
+                if get_attribute(notes[i], "nominal_duration") != None:
+                    addValue = sval + ((eval - sval) * decfn(time / etime, power))
+                    if prop == "duration":
+                        add_duration(notes[i], addValue, i, notes)
+                    else:
+                        add_attribute(notes[i], prop, addValue)
+                    time = time + get_attribute(notes[i], "nominal_duration")
         elif sval > eval:
             time = initdur
             for i in range(i_from, i_to):
-                addValue = eval + ((sval - eval) * accfn(time / etime, power))
-                if prop == "duration":
-                    add_duration(notes[i], addValue, i, notes)
-                else:
-                    add_attribute(notes[i], prop, addValue)
-                time = time + get_attribute(notes[i], "nominal_duration")
+                if get_attribute(notes[i], "nominal_duration") != None:
+                    addValue = eval + ((sval - eval) * accfn(time / etime, power))
+                    if prop == "duration":
+                        add_duration(notes[i], addValue, i, notes)
+                    else:
+                        add_attribute(notes[i], prop, addValue)
+                    time = time + get_attribute(notes[i], "nominal_duration")
 
 def check_list_length(list, meter, level):
     proper_length = get_list_length_for_level_and_meter(level, meter)
