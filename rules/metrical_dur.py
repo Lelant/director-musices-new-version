@@ -14,11 +14,11 @@ class MetricalDur(Rule):
 
         self.title = "Metrical Dur"
 
-        super().__init__(frame=frame, row=row, column=column, rulename=self.title)
+        super().__init__(frame=frame, row=row, column=column, rulename=self.title, initQuantVal=0.002)
 
         upcountingColumn = 3
 
-        self.levelInput = StringInput(self.ruleFrame, upcountingColumn, "1", "Level")
+        self.levelInput = StringInput(self.ruleFrame, upcountingColumn, "4", "Level")
         upcountingColumn = upcountingColumn + 2
         self.weightInput = DoubleInput(self.ruleFrame, upcountingColumn, 1, "Weight")
         upcountingColumn = upcountingColumn + 2
